@@ -1,0 +1,75 @@
+
+import random
+import numpy as np
+import matplotlib.pyplot as plt
+
+random.seed(175)
+
+def normalize(v):
+    norm = np.linalg.norm(v, ord=1)
+    if norm == 0:
+        norm = np.finfo(v.dtype).eps
+    return v / norm
+
+
+def generate_linear_data(noise = 3, n = 20):
+    '''Generates normalized linear data'''
+    x = np.arange(n)
+    delta = np.random.uniform(-noise, noise, size=(n,))
+    mdata = (random.random() - 0.5) *  5
+    bdata = (random.random() - 0.5) * 10
+    y = mdata * x + bdata + delta
+
+    scalex = lambda a: (a - x.mean(axis=0)) / x.std(axis=0)
+    scaley = lambda a: (a - y.mean(axis=0)) / y.std(axis=0)
+
+    x = scalex(x)
+    y = scaley(y)
+
+    m, b = np.polyfit(x, y, 1)
+    
+    return x, y, m, b
+
+
+def generate_quadratic_data(noise = 3, n = 20):
+    '''Generates normalized linear data'''
+    x = np.arange(n)
+    delta = np.random.uniform(-noise, noise, size=(n,))
+    mdata = (random.random() - 0.5) *  5
+    bdata = (random.random() - 0.5) * 10
+    y = mdata * x + bdata + delta
+
+    scalex = lambda a: (a - x.mean(axis=0)) / x.std(axis=0)
+    scaley = lambda a: (a - y.mean(axis=0)) / y.std(axis=0)
+
+    x = scalex(x)
+    y = scaley(y)
+
+    m, b = np.polyfit(x, y, 1)
+    
+    return x, y, m, b
+
+
+def generate_sigmoid_data(noise = 0, n = 20):
+    '''Generates normalized linear data'''
+    x = np.arange(n)
+    delta = np.random.uniform(-noise, noise, size=(n,))
+
+    scalex = lambda a: (a - x.mean(axis=0)) / x.std(axis=0)
+
+    x = scalex(x)
+    
+    y = (x + delta > 0)
+    
+    return x, y, None, None
+
+
+def format_data(X, Y, n = None, f = None):
+    '''Note: Adds bias as a 0th feature to X'''
+    ones = np.ones((1, n))
+    return np.append(ones, X.reshape((f, n)), axis=0), Y.reshape((1, n))
+
+def plot_line(x, w, b):
+    plt.scatter(x, w * x + b)
+    
+    

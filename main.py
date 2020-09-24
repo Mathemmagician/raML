@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 from activations import Identity, Sigmoid
 from costs import Cost, MSE, CrossEntropy
+from metrics import RMSE
 from layers import Layer, Dense
 from models import Sequential
 
@@ -29,7 +30,7 @@ def test_Sequential():
     # model.add(Dense(input_shape=hidden_shape, activation=Sigmoid))
     model.add(Dense(input_shape=input_shape, activation=Identity))
     
-    model.compile(cost=MSE())
+    model.compile(cost=MSE(), metrics=[RMSE()])
 
     plt.scatter(X[1].flatten(), Y.flatten(), label='data', color='red')
     plt.plot(X[1].flatten(), model.forward(X).flatten(), label='before training')

@@ -13,17 +13,20 @@ def plot_history(history, validation=False):
     '''
     n = len(history)
 
-    if validation:
-        fig, axes = plt.subplots(nrows = (n + 1) // 2, ncols = 2, squeeze=False)
-    else:
-        fig, axes = plt.subplots(nrows = n, ncols = 1, squeeze=False)
+    fig, axes = plt.subplots(nrows = (n + 1) // 2, ncols = 2, squeeze=False)
+
+    # if validation:
+    #     fig, axes = plt.subplots(nrows = (n + 1) // 2, ncols = 2, squeeze=False)
+    # else:
+    #     fig, axes = plt.subplots(nrows = n, ncols = 1, squeeze=False)
     fig.canvas.set_window_title('raML : Model History')
     i = 0
     for key, val in history.items():
         axi = axes[i // 2][i % 2]
         axi.set_xlabel('Iterations')
         axi.set_title(key)
-        axi.plot(val)
+        axi.plot(val, c=np.random.rand(3,))
+        i += 1
     plt.show()
 
 

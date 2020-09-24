@@ -9,9 +9,10 @@ class Model:
     def __init__(self):
         pass
 
-    def compile(self, cost, optimizer = None):
+    def compile(self, cost, optimizer = None, metrics=[]):
         self.cost = cost
         self.optimizer = optimizer
+        self.metrics = metrics
 
     def fit(self, X, Y):
         pass
@@ -40,23 +41,22 @@ class Sequential(Model):
             epochstep : int | how often the progress will be displayed
         '''
 
-        self.history = {"Loss": []}
+        self.history = {each : [] for each in ["Loss"] + [metric.name for metric in self.metrics]}
 
-        for i in (pbar := tqdm(range(epochs))):
+        for i in (pbar := tqdm(range(epochs), bar_format='{l_bar}{bar}| Epochs {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]')):
 
             # Forward Propagation
             Yhat = self.forward(X)
 
             # Computing and recording the loss
-            loss = self.cost.calculate(Y, Yhat)
-            self.history["Loss"].append(loss)
+            self.history["Loss"].append(self.cost.calculate(Y, Yhat))
+            for metric in self.metrics:
+                self.history[metric.name].append(metric.calculate(Y, Yhat))
 
             # Backward Propagation
             self.backward(Y, Yhat)
             
-            # if i % epochstep == 0:
-            #     print(f'Iteration {i} : {self.cost}')
-            pbar.set_description(f"Loss {loss:.5f}")
+            pbar.set_description(", ".join([f'{each}:{self.history[each][-1]:.3f}' for each in self.history]))
         
         return self.history
     

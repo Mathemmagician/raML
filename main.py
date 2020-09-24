@@ -7,35 +7,34 @@ from costs import Cost, MSE, CrossEntropy
 from layers import Layer, Dense
 from models import Sequential
 
-from utils import generate_linear_data, generate_sigmoid_data, format_data, plot_line
-
+from utils import generate_linear_data, generate_sigmoid_data, format_data, plot_line, plot_history
+from datasets.load import Swedish_Auto_Insurance
 
 np.random.seed(179)
 
-n, f = (20, 1) # number of samples, number of features
+n, f =  (63, 1)
+X, Y = Swedish_Auto_Insurance()
+X, Y = format_data(X, Y, n = n, f = f)
 
-X, Y, mdata, bdata = generate_sigmoid_data(n = n)
-X, Y = format_data(X, Y, n = n, f = f) # reshapes and adds bias feature
-
-f, n = input_shape = X.shape # (f+1, n) because added bias
+f, n = input_shape = X.shape
 
 
 def test_Sequential():
     n = input_shape[-1]
     hidden_shape = (3, n)
-    ITERATIONS = 100000
+    ITERATIONS = 100
 
     model = Sequential()
     # model.add(Dense(input_shape=input_shape, output_shape=hidden_shape))
     # model.add(Dense(input_shape=hidden_shape, activation=Sigmoid))
-    model.add(Dense(input_shape=input_shape, activation=Sigmoid))
+    model.add(Dense(input_shape=input_shape, activation=Identity))
     
-    model.compile(cost=CrossEntropy())
+    model.compile(cost=MSE())
 
-    plt.scatter(X[1].reshape(20, 1), Y.reshape(20, 1), label='data', color='red')
-    plt.plot(X[1].reshape(20, 1), model.forward(X).reshape(20, 1), label='before training')
+    plt.scatter(X[1].flatten(), Y.flatten(), label='data', color='red')
+    plt.plot(X[1].flatten(), model.forward(X).flatten(), label='before training')
 
-    model.fit(X, Y, epochs=ITERATIONS, epochstep=10)
+    history = model.fit(X, Y, epochs=ITERATIONS, epochstep=10)
 
     temp = X[1][:19]
 
@@ -45,7 +44,9 @@ def test_Sequential():
     plt.xlabel('X')
     plt.ylabel('Y')
     plt.legend()
-    plt.show()
+    
+
+    plot_history(history)
 
 
 

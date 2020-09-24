@@ -40,7 +40,7 @@ class Sequential(Model):
             epochstep : int | how often the progress will be displayed
         '''
 
-        self.history = {"loss": []}
+        self.history = {"Loss": []}
 
         for i in (pbar := tqdm(range(epochs))):
 
@@ -49,7 +49,7 @@ class Sequential(Model):
 
             # Computing and recording the loss
             loss = self.cost.calculate(Y, Yhat)
-            self.history["loss"].append(loss)
+            self.history["Loss"].append(loss)
 
             # Backward Propagation
             self.backward(Y, Yhat)
@@ -57,6 +57,8 @@ class Sequential(Model):
             # if i % epochstep == 0:
             #     print(f'Iteration {i} : {self.cost}')
             pbar.set_description(f"Loss {loss:.5f}")
+        
+        return self.history
     
     def forward(self, X):
         Ai = X # X is A0, forward(X) is A1, .. Yhat is Al

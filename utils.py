@@ -5,6 +5,28 @@ import matplotlib.pyplot as plt
 
 random.seed(175)
 
+def plot_history(history, validation=False):
+    '''
+    Params
+    ------
+        history : dict
+    '''
+    n = len(history)
+
+    if validation:
+        fig, axes = plt.subplots(nrows = (n + 1) // 2, ncols = 2, squeeze=False)
+    else:
+        fig, axes = plt.subplots(nrows = n, ncols = 1, squeeze=False)
+    fig.canvas.set_window_title('raML : Model History')
+    i = 0
+    for key, val in history.items():
+        axi = axes[i // 2][i % 2]
+        axi.set_xlabel('Iterations')
+        axi.set_title(key)
+        axi.plot(val)
+    plt.show()
+
+
 def normalize(v):
     norm = np.linalg.norm(v, ord=1)
     if norm == 0:

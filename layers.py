@@ -36,7 +36,7 @@ class Dense(Layer):
         self.Z = None # Weighted Sum
         self.A = None # Activation(Z)
 
-        self.alpha = 0.01
+        self.alpha = 0.0001
     
     def forward(self, X):
         '''Applies forward propagation to inputs X, i.e.

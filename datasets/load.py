@@ -22,7 +22,7 @@ def Wine_Quality():
     '''The Wine Quality Dataset involves predicting the quality of white wines on 
     a scale given chemical measures of each wine.
 
-    There are 10 feature columns (Density, Acidity, etc.), and a Quality column.
+    There are 11 feature columns (Density, Acidity, etc.), and a Quality column with a total of 4898 observation.
 
     The baseline performance of predicting the mean value is an RMSE of approximately 0.148 quality points.
     '''
@@ -31,7 +31,7 @@ def Wine_Quality():
 
     X, Y = df[df.columns[:-1]].values, df[df.columns[-1]].values
     
-    return X, Y
+    return X.transpose(), Y
 
 
 def Pima_Indians_Diabetes():

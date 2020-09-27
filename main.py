@@ -2,22 +2,44 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from activations import Identity, Sigmoid
+from activations import Identity, Sigmoid, Relu, LeakyRelu
 from costs import Cost, MSE, CrossEntropy
 from metrics import RMSE
 from layers import Layer, Dense
 from models import Sequential
 
 from utils import generate_linear_data, generate_sigmoid_data, format_data, plot_line, plot_history
-from datasets.load import Swedish_Auto_Insurance
+from datasets.load import Wine_Quality, Swedish_Auto_Insurance  
+from preprocessing import Normalizer
 
 np.random.seed(179)
 
-n, f =  (63, 1)
-X, Y = Swedish_Auto_Insurance()
+n, f =  (4898, 11)
+X, Y = Wine_Quality()
 X, Y = format_data(X, Y, n = n, f = f)
 
+normalizer = Normalizer()
+X = normalizer.fit(X)
+
 f, n = input_shape = X.shape
+
+
+def test_Model_Compilation():
+    ITERATIONS = 1000
+
+    model = Sequential([
+        Dense(size=100, input_shape=X.shape, activation=LeakyRelu),
+        Dense(size=20, activation=LeakyRelu),
+        Dense(size=10, activation=LeakyRelu),
+        Dense(size=1, activation=Identity),
+        #Dense(size=1, activation=Identity)
+    ])
+    
+    model.compile(cost=MSE(), metrics=[RMSE()])
+
+    history = model.fit(X, Y, epochs=ITERATIONS, epochstep=10)
+
+    plot_history(history)
 
 
 def test_Sequential():
@@ -52,7 +74,7 @@ def test_Sequential():
 
 
 def main():
-    test_Sequential()
+    test_Model_Compilation()
 
 if __name__ == "__main__":
     main()

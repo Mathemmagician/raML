@@ -16,7 +16,7 @@ class Activation(ABC):
         return
 
 class Identity(Activation):
-    'Applies iddentity'
+    'Applies identity'
     def __init__(self, name='Identity'):
         super().__init__(name)
     
@@ -37,3 +37,25 @@ class Sigmoid(Activation):
     def derivative(self, Z, A):
         return A * (1 - A)
 
+class Relu(Activation):
+    'Applies Rectified Linear Unit'
+    def __init__(self, name='Relu'):
+        super().__init__(name)
+    
+    def apply(self, Z):
+        return Z.clip(min=0)
+    
+    def derivative(self, Z, **kwargs):
+        return np.greater(Z, 0).astype(int)
+
+class LeakyRelu(Activation):
+    'Applies Leaky Relu'
+    def __init__(self, name='Leaky Relu', leak=0.01):
+        super().__init__(name)
+        self.leak = 0.01
+    
+    def apply(self, Z):
+        return np.where(Z > 0, Z, Z * self.leak)
+    
+    def derivative(self, Z, **kwargs):
+        return np.where(Z > 0, 1, self.leak)

@@ -29,8 +29,17 @@ class Sequential(Model):
         self.layers.append(layer)
     
     def compile(self, *args, **kwargs):
+        '''Iteratively compiles every layer'''
         super().compile(*args, **kwargs)
-        
+
+        n = self.layers[0].n
+        input_size = self.layers[0].IN
+        assert n and input_size
+
+        for layer in self.layers:
+            layer.compile(input_shape=(input_size,n), output_shape=(layer.size, n))
+            input_size = layer.size
+    
 
     def fit(self, X, Y, epochs, epochstep):
         '''

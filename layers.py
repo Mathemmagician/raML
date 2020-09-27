@@ -5,11 +5,28 @@ import numpy as np
 from activations import Identity
 
 class Layer(ABC):
-    def __init__(self, input_shape, output_shape=None):
-        ''' IN  - number of neuron of input layer
-            OUT - number of neurons of output layer
+    def __init__(self, size, input_shape=(None, None)):
+        '''
+        Params
+        ------
+            size : int
+                number of neurons (size) of output layer
+            input_shape : (int, int)
+                (number of input features, number of samples) *only required for first layer*
+        '''
+        self.size = size
+        self.IN, self.n = self.input_shape = input_shape
+
+    def compile(self, input_shape, output_shape):
+        ''' 
+        Notes
+        -----
+            IN  - number of neurons (size) of input layer
+            OUT - number of neurons (size) of output layer
             n   - number of samples
         '''
+        assert len(input_shape)== 2
+
         IN, n = input_shape
         self.input_shape = input_shape
         self.output_shape = output_shape
@@ -20,32 +37,35 @@ class Layer(ABC):
     @abstractmethod
     def forward(self, X):
         pass
-    
+
+    @abstractmethod
+    def backward(self, dA):
+        pass
+
 
 class Dense(Layer):
-    def __init__(self, input_shape, output_shape=(1,), activation=Identity):
+    def __init__(self, size, input_shape=(None, None), activation=Identity):
+        super().__init__(size, input_shape)
+        self.activation = activation()
+
+    def compile(self, input_shape, output_shape=(1,)):
         ''' W is the weights matrix | [in x out] 
             Z is Sum(w_i * x_i)     | [out x n]
             A is activation.apply(Z)| [out x n]
         '''
-        super().__init__(input_shape, output_shape)
-        self.activation = activation()
+        super().compile(input_shape, output_shape)
 
-        self.W = np.random.rand(self.OUT, self.IN)
-        self.X = None # Input
-        self.Z = None # Weighted Sum
-        self.A = None # Activation(Z)
-
-        self.alpha = 0.0001
+        #self.W = np.random.rand(self.OUT, self.IN)
+        self.W = np.random.randn(self.OUT, self.IN) * np.sqrt(2 / (self.IN + self.OUT))
+        # Important note: for tanh: 1/self.IN, Relu: 2/self.IN. Instead, I'm using new theory
+        self.alpha = 0.001 # Place holder for optimizer
     
     def forward(self, X):
         '''Applies forward propagation to inputs X, i.e.
-
-        Math:
             self.Z = W * X
             self.A = a(Z)
         '''
-        assert X.shape == self.input_shape or X.shape == self.input_shape[:-1]
+        assert X.ndim == 2 and X.shape[0] == self.input_shape[0]
 
         self.X = X
         self.Z = np.dot(self.W, self.X)
@@ -80,3 +100,18 @@ class Dense(Layer):
         self.W = self.W - self.alpha * dW
 
         return dX, dW
+
+
+class Lambda(Layer):
+    '''Gotta think about this one'''
+    def __init__(self, function):
+        self.function = function
+
+    def compile(self):
+        pass
+
+    def forward(self, X):
+        return
+
+    def backward(self, dA):
+        pass

@@ -9,13 +9,13 @@ from layers import Layer, Dense
 from models import Sequential
 
 from utils import generate_linear_data, generate_sigmoid_data, format_data, plot_line, plot_history
-from datasets.load import Wine_Quality, Swedish_Auto_Insurance  
+from datasets.load import Wine_Quality, Swedish_Auto_Insurance, Boston_House_Price 
 from preprocessing import Normalizer
 
 np.random.seed(179)
 
-n, f =  (4898, 11)
-X, Y = Wine_Quality()
+n, f = (506, 13)
+X, Y = Boston_House_Price()
 X, Y = format_data(X, Y, n = n, f = f)
 
 normalizer = Normalizer()
@@ -30,7 +30,7 @@ def test_Model_Compilation():
     model = Sequential([
         Dense(size=100, input_shape=X.shape, activation=LeakyRelu),
         Dense(size=20, activation=LeakyRelu),
-        Dense(size=10, activation=LeakyRelu),
+        Dense(size=20, activation=LeakyRelu),
         Dense(size=1, activation=Identity),
         #Dense(size=1, activation=Identity)
     ])

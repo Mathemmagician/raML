@@ -1,5 +1,6 @@
 
 import pandas as pd
+from ..utils import format_data
 
 
 def Swedish_Auto_Insurance():
@@ -15,7 +16,7 @@ def Swedish_Auto_Insurance():
     url = "https://www.math.muni.cz/~kolacek/docs/frvs/M7222/data/AutoInsurSweden.txt"
     df = pd.read_csv(url, skiprows = 10, header=0, delimiter='\t', decimal=',')
 
-    return df['X'].values, df['Y'].values
+    return format_data(df['X'].values, df['Y'].values, n = 63, f = 1)
 
 
 def Wine_Quality():
@@ -31,7 +32,7 @@ def Wine_Quality():
 
     X, Y = df[df.columns[:-1]].values, df[df.columns[-1]].values
     
-    return X.transpose(), Y
+    return format_data(X.transpose(), Y, n = 4898, f = 11)
 
 
 def Pima_Indians_Diabetes():
@@ -60,7 +61,7 @@ def Pima_Indians_Diabetes():
     df = pd.read_csv(url)
 
     X, Y = df[df.columns[:-1]].values, df[df.columns[-1]].values
-    return X, Y
+    return format_data(X, Y, n = 768, f = 8)
 
 
 def Sonar():
@@ -105,7 +106,7 @@ def Boston_House_Price():
     df = pd.read_csv(url, header=None, delim_whitespace=True)
 
     X, Y = df[df.columns[:-1]].values, df[df.columns[-1]].values
-    return X, Y
+    return format_data(X, Y, n = 506, f = 13)
 
 
 if __name__ == '__main__':

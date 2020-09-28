@@ -73,6 +73,14 @@ class Dense(Layer):
 
         return self.A
     
+    def val_forward(self, X):
+        '''Applies forward propagation to inputs X, without storing - use for validation'''
+        assert X.ndim == 2 and X.shape[0] == self.input_shape[0]
+        Z = np.dot(self.W, X)
+        A = self.activation.apply(Z)
+
+        return A
+
     def backward(self, dA):
         '''Given derivatives of next layer, adjust the weights
 

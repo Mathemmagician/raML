@@ -23,36 +23,41 @@ def format_data(X, Y, n = None, f = None):
     return np.append(ones, X.reshape((f, n)), axis=0), Y.reshape((1, n))
 
 
-def plot_history(history, validation=False):
+def plot_history(history, title=None, validation=True):
     '''
+    *NEEDS IMPROVEMENTS*
     Params
     ------
         history : dict
     '''
     n = len(history)
 
-    fig, axes = plt.subplots(nrows = (n + 1) // 2, ncols = 2, squeeze=False)
+    ncols = n // 2 if validation else n
 
-    # if validation:
-    #     fig, axes = plt.subplots(nrows = (n + 1) // 2, ncols = 2, squeeze=False)
-    # else:
-    #     fig, axes = plt.subplots(nrows = n, ncols = 1, squeeze=False)
+    plt.rcParams['savefig.facecolor'] = "0.8"
+    fig, axes = plt.subplots(nrows = 1, ncols = ncols, squeeze=False)
     fig.canvas.set_window_title('raML : Model History')
+    if title:
+        fig.suptitle(title)
+
     i = 0
-    for key, val in history.items():
-        axi = axes[i // 2][i % 2]
-        axi.set_xlabel('Iterations')
-        axi.set_title(key)
-        axi.plot(val, c=np.random.rand(3,))
-        i += 1
-    plt.show()
+    if validation:
+        for key in history:
+            if key[:3] == 'val':
+                continue
+            axi = axes[0][i]
+            axi.set_xlabel('Epochs')
+            axi.set_title(key)
+            axi.plot(history[key], label = key)
+            axi.plot(history[f'val_{key}'], label = f'val_{key}')
+            i += 1
+            axi.legend(shadow=True, fancybox=True)
+        plt.tight_layout()
+        plt.show()
 
-
-def normalize(v):
-    norm = np.linalg.norm(v, ord=1)
-    if norm == 0:
-        norm = np.finfo(v.dtype).eps
-    return v / norm
+    else:
+        print("NOT SUPPORTED YET")
+        raise
 
 
 def generate_linear_data(noise = 3, n = 20):

@@ -42,7 +42,7 @@ class Sequential(Model):
             input_size = layer.size
     
 
-    def fit(self, X, Y, epochs, epochstep):
+    def fit(self, X, Y, epochs, epochstep, x_val=None, y_val=None):
         '''
         Params:
             X : np.ndarray  | input data
@@ -50,8 +50,12 @@ class Sequential(Model):
             epochs : int    | number of training steps
             epochstep : int | how often the progress will be displayed
         '''
-
+            
         self.history = {each : [] for each in ["Loss"] + [metric.name for metric in self.metrics]}
+        
+        if (validation := (x_val is not None) and (y_val is not None)):
+            for each in ["Loss"] + [metric.name for metric in self.metrics]:
+                self.history[f'val_{each}'] = []
 
         for i in (pbar := raml_tqdm(range(epochs))):
 
@@ -60,8 +64,16 @@ class Sequential(Model):
 
             # Computing and recording the loss
             self.history["Loss"].append(self.cost.calculate(Y, Yhat))
+
             for metric in self.metrics:
                 self.history[metric.name].append(metric.calculate(Y, Yhat))
+
+            if validation:
+                Yhat_val = self.val_forward(x_val)
+                self.history["val_Loss"].append(self.cost.calculate(y_val, Yhat_val))
+                for metric in self.metrics:
+                    self.history[f"val_{metric.name}"].append(metric.calculate(y_val, Yhat_val))
+
 
             # Backward Propagation
             self.backward(Y, Yhat)
@@ -74,6 +86,13 @@ class Sequential(Model):
         Ai = X # X is A0, forward(X) is A1, .. Yhat is Al
         for layer in self.layers:
             Ai = layer.forward(Ai)
+        Yhat = Ai
+        return Yhat
+    
+    def val_forward(self, X):
+        Ai = X # X is A0, forward(X) is A1, .. Yhat is Al
+        for layer in self.layers:
+            Ai = layer.val_forward(Ai)
         Yhat = Ai
         return Yhat
     

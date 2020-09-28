@@ -10,15 +10,15 @@ I unapologetically reinvent the best parts from the best sources
 ### Code Example:
 
 ```python
+from models import Sequential
+from layers import Dense
 from activations import LeakyRelu
 from costs import MSE
 from metrics import RMSE
-from layers import Dense
-from models import Sequential
 
 from utils import format_data, plot_history
-from datasets.load import Boston_House_Price 
 from preprocessing import Normalizer
+from datasets.load import Boston_House_Price 
 
 X, Y = Boston_House_Price()
 X, Y = format_data(X, Y, n = 506, f = 13)
@@ -42,4 +42,8 @@ def train_model():
     history = model.fit(X, Y, epochs=ITERATIONS, epochstep=10)
 
     plot_history(history)
+
+train_model()
 ```
+
+And it works beautifuly! I'll get to uploading the full process eventually

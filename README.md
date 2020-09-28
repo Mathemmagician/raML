@@ -37,7 +37,7 @@ def train_model():
         Dense(size=1, activation=Identity),
     ])
     
-    model.compile(cost=MSE(), metrics=[RMSE()])
+    model.compile( cost = MSE(), metrics = [RMSE()] )
 
     history = model.fit(X, Y, epochs=ITERATIONS, epochstep=10)
 

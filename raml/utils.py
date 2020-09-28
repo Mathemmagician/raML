@@ -2,8 +2,19 @@
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 random.seed(175)
+
+
+class raml_tqdm(tqdm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs, bar_format='{l_bar}{bar}| Epochs {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]')
+
+    def set_description(self, history):
+        super().set_description(", ".join([f'{each}:{history[each][-1]:.3f}' for each in history]))
+
 
 def plot_history(history, validation=False):
     '''
@@ -90,7 +101,7 @@ def generate_sigmoid_data(noise = 0, n = 20):
 
 
 def format_data(X, Y, n = None, f = None):
-    '''Note: Adds bias as a 0th feature to X'''
+    '''Note: Adds bias as a 0th feature to X and reshapes'''
     ones = np.ones((1, n))
     return np.append(ones, X.reshape((f, n)), axis=0), Y.reshape((1, n))
 

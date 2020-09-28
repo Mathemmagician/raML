@@ -4,6 +4,7 @@ from collections import defaultdict
 
 import numpy as np
 from tqdm import tqdm
+from .utils import raml_tqdm
 
 class Model:
     def __init__(self):
@@ -52,7 +53,7 @@ class Sequential(Model):
 
         self.history = {each : [] for each in ["Loss"] + [metric.name for metric in self.metrics]}
 
-        for i in (pbar := tqdm(range(epochs), bar_format='{l_bar}{bar}| Epochs {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]')):
+        for i in (pbar := raml_tqdm(range(epochs))):
 
             # Forward Propagation
             Yhat = self.forward(X)
@@ -65,7 +66,7 @@ class Sequential(Model):
             # Backward Propagation
             self.backward(Y, Yhat)
             
-            pbar.set_description(", ".join([f'{each}:{self.history[each][-1]:.3f}' for each in self.history]))
+            pbar.set_description(self.history)
         
         return self.history
     

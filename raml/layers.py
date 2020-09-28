@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 import numpy as np
 
-from activations import Identity
+from .activations import Identity
 
 class Layer(ABC):
     def __init__(self, size, input_shape=(None, None)):

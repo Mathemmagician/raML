@@ -2,13 +2,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 from raml.activations import Identity, Sigmoid, Relu, LeakyRelu
-from raml.costs import Cost, MSE, CrossEntropy
+from raml.costs import MSE, CrossEntropy
 from raml.metrics import RMSE
-from raml.layers import Layer, Dense
+from raml.layers import Dense
 from raml.models import Sequential
 
-from raml.utils import generate_linear_data, generate_sigmoid_data, format_data, plot_line, plot_history
+from raml.utils import format_data, plot_history
 from raml.datasets.load import Wine_Quality, Swedish_Auto_Insurance, Boston_House_Price 
 from raml.preprocessing import Normalizer
 

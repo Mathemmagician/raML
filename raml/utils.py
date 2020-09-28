@@ -8,12 +8,19 @@ random.seed(175)
 
 
 class raml_tqdm(tqdm):
-
+    '''Used to track model's training performance'''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs, bar_format='{l_bar}{bar}| Epochs {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]')
 
     def set_description(self, history):
+        '''Sets the description of the progress bar to latest values (of loss, metrics, etc.)'''
         super().set_description(", ".join([f'{each}:{history[each][-1]:.3f}' for each in history]))
+
+
+def format_data(X, Y, n = None, f = None):
+    '''Note: Adds bias as a 0th feature to X and reshapes'''
+    ones = np.ones((1, n))
+    return np.append(ones, X.reshape((f, n)), axis=0), Y.reshape((1, n))
 
 
 def plot_history(history, validation=False):
@@ -67,25 +74,6 @@ def generate_linear_data(noise = 3, n = 20):
     return x, y, m, b
 
 
-def generate_quadratic_data(noise = 3, n = 20):
-    '''Generates normalized linear data'''
-    x = np.arange(n)
-    delta = np.random.uniform(-noise, noise, size=(n,))
-    mdata = (random.random() - 0.5) *  5
-    bdata = (random.random() - 0.5) * 10
-    y = mdata * x + bdata + delta
-
-    scalex = lambda a: (a - x.mean(axis=0)) / x.std(axis=0)
-    scaley = lambda a: (a - y.mean(axis=0)) / y.std(axis=0)
-
-    x = scalex(x)
-    y = scaley(y)
-
-    m, b = np.polyfit(x, y, 1)
-    
-    return x, y, m, b
-
-
 def generate_sigmoid_data(noise = 0, n = 20):
     '''Generates normalized linear data'''
     x = np.arange(n)
@@ -99,13 +87,4 @@ def generate_sigmoid_data(noise = 0, n = 20):
     
     return x, y, None, None
 
-
-def format_data(X, Y, n = None, f = None):
-    '''Note: Adds bias as a 0th feature to X and reshapes'''
-    ones = np.ones((1, n))
-    return np.append(ones, X.reshape((f, n)), axis=0), Y.reshape((1, n))
-
-def plot_line(x, w, b):
-    plt.scatter(x, w * x + b)
-    
     

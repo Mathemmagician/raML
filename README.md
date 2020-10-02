@@ -1,5 +1,5 @@
+![Logo](https://github.com/Mathemmagician/raML/blob/master/imgs/raML.png)
 
-# raML 
 ### - A Deep Learning Framework developed by Ramil
 
 The goal is to write a Framework from scratch using only basic python tools and libraries
@@ -7,7 +7,7 @@ The goal is to write a Framework from scratch using only basic python tools and 
 I unapologetically reinvent the best parts from the best sources
 
 
-### Code Example:
+### Code Example of what is now possible:
 
 ```python
 from raml.models import Sequential

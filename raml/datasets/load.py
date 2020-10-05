@@ -1,8 +1,9 @@
 
 import pandas as pd
-from ..utils import format_data
+from ..utils import format_data, cache
 
 
+@cache
 def Swedish_Auto_Insurance():
     '''The Swedish Auto Insurance Dataset involves predicting the total payment for all 
     claims in thousands of Swedish Kronor, given the total number of claims.
@@ -18,7 +19,7 @@ def Swedish_Auto_Insurance():
 
     return format_data(df['X'].values, df['Y'].values, n = 63, f = 1)
 
-
+@cache
 def Wine_Quality():
     '''The Wine Quality Dataset involves predicting the quality of white wines on 
     a scale given chemical measures of each wine.
@@ -34,7 +35,7 @@ def Wine_Quality():
     
     return format_data(X.transpose(), Y, n = 4898, f = 11)
 
-
+@cache
 def Pima_Indians_Diabetes():
     '''The Pima Indians Diabetes Dataset involves predicting the onset of diabetes 
     within 5 years in Pima Indians given medical details.
@@ -63,7 +64,7 @@ def Pima_Indians_Diabetes():
     X, Y = df[df.columns[:-1]].values, df[df.columns[-1]].values
     return format_data(X, Y, n = 768, f = 8)
 
-
+@cache
 def Sonar():
     '''The Sonar Dataset involves the prediction of whether or not an object is a mine or 
     a rock given the strength of sonar returns at different angles.
@@ -78,6 +79,7 @@ def Sonar():
     url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/undocumented/connectionist-bench/sonar/sonar.all-data'
     raise "Not Finished"
 
+@cache
 def Boston_House_Price():
     '''The Boston House Price Dataset involves the prediction of a house price in thousands 
     of dollars given details of the house and its neighborhood.

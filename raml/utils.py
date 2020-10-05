@@ -3,6 +3,8 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+import pickle
+import os
 
 random.seed(175)
 
@@ -17,18 +19,19 @@ class raml_tqdm(tqdm):
         super().set_description(", ".join([f'{each}:{history[each][-1]:.3f}' for each in history]))
 
 
-def format_data(X, Y, n = None, f = None):
+def format_data(X, Y, n = None, f = None, out=1):
     '''Note: Adds bias as a 0th feature to X and reshapes'''
     ones = np.ones((1, n))
-    return np.append(ones, X.reshape((f, n)), axis=0), Y.reshape((1, n))
+    return np.append(ones, X.reshape((f, n)), axis=0), Y.reshape((out, n))
 
 
 def plot_history(history, title=None, validation=True):
-    '''
-    *NEEDS IMPROVEMENTS*
+    '''Plots the history of model's training
+    
     Params
     ------
         history : dict
+            Contains history
     '''
     n = len(history)
 
@@ -52,12 +55,41 @@ def plot_history(history, title=None, validation=True):
             axi.plot(history[f'val_{key}'], label = f'val_{key}')
             i += 1
             axi.legend(shadow=True, fancybox=True)
+            axi.grid()
         plt.tight_layout()
         plt.show()
-
     else:
         print("NOT SUPPORTED YET")
         raise
+
+
+def cache(func):
+
+    def pull_cached_object(name):
+        DIRNAME = 'raml_cache'
+
+        if not os.path.exists(os.path.join(DIRNAME, f"{name}.p")):
+            return False
+        print(f'Pulling cashed {name}')
+        obj = pickle.load( open( os.path.join(DIRNAME, f"{name}.p"), "rb" ) )
+
+    def cache_object(name, obj):
+        DIRNAME = 'raml_cache'
+
+        if not os.path.exists(DIRNAME):
+            os.makedirs(DIRNAME)
+
+        pickle.dump( obj, open( os.path.join(DIRNAME, f"{name}.p"), "wb" ) )
+
+    def wrapper():
+        name = func.__name__
+        data = pull_cached_object(name)
+        if data:
+            return data
+        data = func()
+        cache_object(f'{name}', data)
+        return data
+    return wrapper
 
 
 def generate_linear_data(noise = 3, n = 20):

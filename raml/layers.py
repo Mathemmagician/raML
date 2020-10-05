@@ -58,7 +58,7 @@ class Dense(Layer):
         #self.W = np.random.rand(self.OUT, self.IN)
         self.W = np.random.randn(self.OUT, self.IN) * np.sqrt(2 / (self.IN + self.OUT))
         # Important note: for tanh: 1/self.IN, Relu: 2/self.IN. Instead, I'm using new theory
-        self.alpha = 0.001 # Place holder for optimizer
+        self.alpha = 0.01 # Place holder for optimizer
     
     def forward(self, X):
         '''Applies forward propagation to inputs X, i.e.
@@ -72,14 +72,6 @@ class Dense(Layer):
         self.A = self.activation.apply(self.Z)
 
         return self.A
-    
-    def val_forward(self, X):
-        '''Applies forward propagation to inputs X, without storing - use for validation'''
-        assert X.ndim == 2 and X.shape[0] == self.input_shape[0]
-        Z = np.dot(self.W, X)
-        A = self.activation.apply(Z)
-
-        return A
 
     def backward(self, dA):
         '''Given derivatives of next layer, adjust the weights
@@ -98,10 +90,10 @@ class Dense(Layer):
         assert dA.shape == self.Z.shape
 
         dZ = dA * self.activation.derivative(self.Z, A=self.A)
-        assert dZ.shape == dA.shape == (self.OUT, self.n)
+        assert dZ.shape == dA.shape 
 
         dW = np.dot(dZ, self.X.transpose()) / self.n
-        assert dW.shape == self.W.shape == (self.OUT, self.IN)
+        assert dW.shape == self.W.shape
 
         dX = np.dot(self.W.transpose(), dZ)
 

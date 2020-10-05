@@ -2,6 +2,8 @@
 .DS_Store*
 .vscode*
 ramlenv
+raml_cache
+profiler.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

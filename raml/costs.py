@@ -27,7 +27,7 @@ class MSE(Cost):
     
     def calculate(self, Y, Yhat):
         '''Returns normalized J = sum(|| Yhat - Y || ^ 2) / 2m'''
-        assert (Y.shape == Yhat.shape) and (Y.shape[0] == 1)
+        assert (Y.shape == Yhat.shape)
 
         self.cost = np.square(Y - Yhat).mean()
         return self.cost
@@ -36,7 +36,8 @@ class MSE(Cost):
         '''Returns J' = Yhat - Y'''
         self.dA = Yhat - Y
         return self.dA
-    
+
+
 class CrossEntropy(Cost):
     '''Loss function for binary classification'''
     def __init__(self):

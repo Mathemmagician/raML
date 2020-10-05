@@ -20,6 +20,27 @@ class Model:
 
     def evaluate(self, Y, yhat):
         pass
+    
+    def iterate_minibatches(self, X, Y, batchsize, shuffle=False):
+        '''Yields mini batches
+        
+        Example Usage
+        -------------
+        for n in xrange(n_epochs):
+            for batch in iterate_minibatches(X, Y, batch_size, shuffle=True):
+                x_batch, y_batch = batch
+                ...
+        '''
+        assert X.shape[1] == Y.shape[1]
+        if shuffle:
+            indices = np.arange(X.shape[1])
+            np.random.shuffle(indices)
+        for start_idx in range(0, X.shape[1] - batchsize + 1, batchsize):
+            if shuffle:
+                excerpt = indices[start_idx:start_idx + batchsize]
+            else:
+                excerpt = slice(start_idx, start_idx + batchsize)
+            yield X[:,excerpt], Y[:,excerpt]
 
 
 class Sequential(Model):
@@ -42,15 +63,17 @@ class Sequential(Model):
             input_size = layer.size
     
 
-    def fit(self, X, Y, epochs, epochstep, x_val=None, y_val=None):
+    def fit(self, X, Y, epochs, x_val=None, y_val=None, batchsize=32):
         '''
         Params:
             X : np.ndarray  | input data
             Y : np.ndarray  | output data
             epochs : int    | number of training steps
-            epochstep : int | how often the progress will be displayed
         '''
-            
+        
+        if batchsize is None:
+            batchsize = X.shape[1]
+        
         self.history = {each : [] for each in ["Loss"] + [metric.name for metric in self.metrics]}
         
         if (validation := (x_val is not None) and (y_val is not None)):
@@ -59,24 +82,25 @@ class Sequential(Model):
 
         for i in (pbar := raml_tqdm(range(epochs))):
 
-            # Forward Propagation
-            Yhat = self.forward(X)
+            for batch in self.iterate_minibatches(X, Y, batchsize=batchsize, shuffle=False):
+                X_batch, Y_batch = batch
 
-            # Computing and recording the loss
-            self.history["Loss"].append(self.cost.calculate(Y, Yhat))
+                if validation:
+                    Yhat_val = self.forward(x_val)
+                    self.history["val_Loss"].append(self.cost.calculate(y_val, Yhat_val))
+                    for metric in self.metrics:
+                        self.history[f"val_{metric.name}"].append(metric.calculate(y_val, Yhat_val))
 
-            for metric in self.metrics:
-                self.history[metric.name].append(metric.calculate(Y, Yhat))
+                # Forward Propagation
+                Yhat_batch = self.forward(X_batch)
 
-            if validation:
-                Yhat_val = self.val_forward(x_val)
-                self.history["val_Loss"].append(self.cost.calculate(y_val, Yhat_val))
+                # Computing and recording the loss
+                self.history["Loss"].append(self.cost.calculate(Y_batch, Yhat_batch))
                 for metric in self.metrics:
-                    self.history[f"val_{metric.name}"].append(metric.calculate(y_val, Yhat_val))
+                    self.history[metric.name].append(metric.calculate(Y_batch, Yhat_batch))
 
-
-            # Backward Propagation
-            self.backward(Y, Yhat)
+                # Backward Propagation
+                self.backward(Y_batch, Yhat_batch)
             
             pbar.set_description(self.history)
         
@@ -86,13 +110,6 @@ class Sequential(Model):
         Ai = X # X is A0, forward(X) is A1, .. Yhat is Al
         for layer in self.layers:
             Ai = layer.forward(Ai)
-        Yhat = Ai
-        return Yhat
-    
-    def val_forward(self, X):
-        Ai = X # X is A0, forward(X) is A1, .. Yhat is Al
-        for layer in self.layers:
-            Ai = layer.val_forward(Ai)
         Yhat = Ai
         return Yhat
     

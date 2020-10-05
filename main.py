@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from raml.activations import Identity, Sigmoid, Relu, LeakyRelu
+from raml.activations import Identity, Sigmoid, Relu, LeakyRelu, Softmax
 from raml.costs import MSE, CrossEntropy
 from raml.metrics import RMSE
 from raml.layers import Dense
@@ -13,38 +13,39 @@ from raml.datasets.load import Wine_Quality, Swedish_Auto_Insurance, Boston_Hous
 from raml.preprocessing import Normalizer, train_test_split
 
 
+def test_Mnist():
+    from raml.datasets.mnist import Mnist
 
-def test_DNN():
+    X, Y = Mnist()
 
-    np.random.seed(179)
+    # X, Y = Boston_House_Price()
 
-    X, Y = Boston_House_Price()
+    (x_train, x_val), (y_train, y_val) = \
+        train_test_split(X, Y=Y, ratio=[0.8, 0.2], shuffle=True, random_seed=7)
+    
+    # normalizer = Normalizer()
+    # x_train = normalizer.fit(x_train)
+    # x_val = normalizer.apply(x_val)
 
-    (x_train, x_val, x_test), (y_train, y_val, y_test) =  \
-        train_test_split(X, Y=Y, ratio=[0.6, 0.2, 0.2], shuffle=True, random_seed=7)
-
-    normalizer = Normalizer()
-    x_train = normalizer.fit(x_train)
-    x_val = normalizer.apply(x_val)
-
-    ITERATIONS = 100
+    ITERATIONS = 1
 
     model = Sequential([
         Dense(size=100, input_shape=x_train.shape, activation=LeakyRelu),
-        Dense(size=10, activation=LeakyRelu),
         Dense(size=20, activation=LeakyRelu),
-        Dense(size=1,  activation=Identity),
+        Dense(size=20, activation=LeakyRelu),
+        Dense(size=10, activation=Sigmoid),
     ])
     
     model.compile(cost=MSE(), metrics=[RMSE()])
 
-    history = model.fit(x_train, y_train, epochs=ITERATIONS, epochstep=10, x_val=x_val, y_val=y_val)
+    history = model.fit(x_train, y_train, epochs=ITERATIONS, x_val=x_val, y_val=y_val, batchsize=32)
 
-    plot_history(history, title="Boston_House_Price")
+    plot_history(history, title="Mnist")
+
 
 
 def main():
-    test_DNN()
+    test_Mnist()
 
 if __name__ == "__main__":
     main()

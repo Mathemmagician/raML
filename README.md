@@ -1,5 +1,5 @@
+![Logo](https://github.com/Mathemmagician/raML/blob/master/imgs/raML.png)
 
-# raML 
 ### - A Deep Learning Framework developed by Ramil
 
 The goal is to write a Framework from scratch using only basic python tools and libraries
@@ -7,7 +7,7 @@ The goal is to write a Framework from scratch using only basic python tools and 
 I unapologetically reinvent the best parts from the best sources
 
 
-### Code Example:
+### Code Example of what is now possible:
 
 ```python
 from raml.models import Sequential
@@ -21,15 +21,17 @@ from raml.preprocessing import Normalizer
 from raml.datasets.load import Boston_House_Price 
 
 X, Y = Boston_House_Price()
-X, Y = format_data(X, Y, n = 506, f = 13)
+(x_train, x_val), (y_train, y_val) = train_test_split(X, Y=Y, ratio=[0.7, 0.3], shuffle=True)
 
 normalizer = Normalizer()
-X = normalizer.fit(X)
+x_train = normalizer.fit(x_train)
+x_val = normalizer.apply(x_val)
+
 
 def train_model():
 
     ITERATIONS = 1000
-
+    
     model = Sequential([
         Dense(size=100, input_shape=X.shape, activation=LeakyRelu),
         Dense(size=20, activation=LeakyRelu),
@@ -39,11 +41,14 @@ def train_model():
     
     model.compile( cost = MSE(), metrics = [RMSE()] )
 
-    history = model.fit(X, Y, epochs=ITERATIONS, epochstep=10)
+    history = model.fit(x_train, y_train, epochs=ITERATIONS, x_val=x_val, y_val=y_val)
 
     plot_history(history)
 
 train_model()
 ```
 
-And it works beautifuly! I'll get to uploading the full process eventually
+![History Plots](https://github.com/Mathemmagician/raML/blob/master/imgs/raML_3_Boston_Housing_Price.png?raw=true "History")
+
+
+Works beautifuly!

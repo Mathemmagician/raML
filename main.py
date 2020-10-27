@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from raml.activations import Identity, Sigmoid, Relu, LeakyRelu, Softmax
-from raml.costs import MSE, CrossEntropy
+from raml.costs import MSE, CrossEntropy, CategoricalCrossEntropy
 from raml.metrics import RMSE
 from raml.layers import Dense
 from raml.models import Sequential
@@ -20,8 +20,8 @@ def test_Mnist():
 
     # X, Y = Boston_House_Price()
 
-    (x_train, x_val), (y_train, y_val) = \
-        train_test_split(X, Y=Y, ratio=[0.8, 0.2], shuffle=True, random_seed=7)
+    (x_train, x_val, _), (y_train, y_val, _) = \
+        train_test_split(X, Y=Y, ratio=[0.1, 0.1, 0.8], shuffle=True, random_seed=7)
     
     # normalizer = Normalizer()
     # x_train = normalizer.fit(x_train)
@@ -32,11 +32,10 @@ def test_Mnist():
     model = Sequential([
         Dense(size=100, input_shape=x_train.shape, activation=LeakyRelu),
         Dense(size=20, activation=LeakyRelu),
-        Dense(size=20, activation=LeakyRelu),
-        Dense(size=10, activation=Sigmoid),
+        Dense(size=10, activation=Softmax),
     ])
     
-    model.compile(cost=MSE(), metrics=[RMSE()])
+    model.compile(cost=CategoricalCrossEntropy(), metrics=[RMSE()])
 
     history = model.fit(x_train, y_train, epochs=ITERATIONS, x_val=x_val, y_val=y_val, batchsize=32)
 

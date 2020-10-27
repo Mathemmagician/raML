@@ -71,6 +71,8 @@ class Dense(Layer):
         self.Z = np.dot(self.W, self.X)
         self.A = self.activation.apply(self.Z)
 
+        assert self.A.shape == self.Z.shape # Sanity check
+
         return self.A
 
     def backward(self, dA):

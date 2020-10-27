@@ -37,6 +37,35 @@ class Sigmoid(Activation):
     def derivative(self, Z, A):
         return A * (1 - A)
 
+class Softmax(Activation):
+    'Applies softmax'
+    def __init__(self, name='Softmax'):
+        super().__init__(name)
+    
+    def apply(self, Z):
+        ''' Normalizes to probability '''
+        # e_Z = np.exp(Z - np.max(Z))
+        # return e_Z / e_Z.sum(axis=0) 
+        assert len(Z.shape) == 2
+        s = np.max(Z, axis=0) #.reshape(1, -1)
+        e_Z = np.exp(Z - s)
+        div = np.sum(e_Z, axis=0) #.reshape(1, -1)
+        return e_Z / div
+    
+    def derivative(self, Z, **kwargs):
+        '''WARNING: The behavior of this function is abnormal due to the math of softmax
+        
+        Z ---softmax---> A ---CategoricalCrossEntropy---> Loss
+        
+        Turns out that dZ = Yhat - Y, therefore (Yhat - Y) is passed in backpropagation
+        
+        Input:
+            dA = Yhat - Y
+        '''
+
+        return 1
+
+
 class Relu(Activation):
     'Applies Rectified Linear Unit'
     def __init__(self, name='Relu'):
@@ -59,3 +88,21 @@ class LeakyRelu(Activation):
     
     def derivative(self, Z, **kwargs):
         return np.where(Z > 0, 1, self.leak)
+
+
+
+def test_softmax():
+    soft = Softmax()
+
+    x1 = np.array([[1, 2, 3, 6]]).T
+
+    print(x1)
+
+    print(soft.apply(x1))
+
+
+
+if __name__ == '__main__':
+    # Testing
+    test_softmax()
+

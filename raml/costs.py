@@ -55,3 +55,29 @@ class CrossEntropy(Cost):
 
         self.dA = (0 - Y) / Yhat + (1 - Y) / (1 - Yhat)
         return self.dA
+
+
+class CategoricalCrossEntropy(Cost):
+    '''Loss function for multi-class classification'''
+    def __init__(self):
+        super().__init__(name="CategoricalCrossEntropy")
+    
+    def calculate(self, Y, Yhat):
+        '''Math:
+            -summation{yi ln( yhat i)}
+        '''
+        assert (Y.shape == Yhat.shape)
+
+        self.cost = -np.sum( Y * np.log(Yhat) , axis=0 ).mean()
+        return self.cost
+    
+    def derivative(self, Y, Yhat):
+        '''Note: The return of this function is NOT a derivative. 
+        It is assumed that the derivative is going to be fed into Softmax layer
+        during the propagation. Since derivative of the softmax layer
+        dZ = Yhat - Y, it's just easier to return that.
+        '''
+        assert Y.shape == Yhat.shape
+
+        self.dA = Yhat - Y
+        return self.dA

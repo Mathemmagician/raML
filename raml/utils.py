@@ -57,10 +57,18 @@ def plot_history(history, title=None, validation=True):
             axi.legend(shadow=True, fancybox=True)
             axi.grid()
         plt.tight_layout()
-        plt.show()
     else:
-        print("NOT SUPPORTED YET")
-        raise
+        for key in history:
+            axi = axes[0][i]
+            axi.set_xlabel('Epochs')
+            axi.set_title(key)
+            axi.plot(history[key], label = key)
+            i += 1
+            axi.legend(shadow=True, fancybox=True)
+            axi.grid()
+        plt.tight_layout()
+    
+    plt.show()
 
 
 def cache(func):

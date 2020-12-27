@@ -1,5 +1,5 @@
 
-# Model buildign blocks
+# Model building blocks
 from . import activations
 from . import costs
 from . import layers

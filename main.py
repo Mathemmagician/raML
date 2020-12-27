@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from raml.activations import Identity, Sigmoid, Relu, LeakyRelu, Softmax
 from raml.costs import MSE, CrossEntropy, CategoricalCrossEntropy
-from raml.metrics import RMSE
+from raml.metrics import RMSE, CategoricalAccuracy
 from raml.layers import Dense
 from raml.models import Sequential
 
@@ -21,25 +21,28 @@ def test_Mnist():
     # X, Y = Boston_House_Price()
 
     (x_train, x_val, _), (y_train, y_val, _) = \
-        train_test_split(X, Y=Y, ratio=[0.1, 0.1, 0.8], shuffle=True, random_seed=7)
+        train_test_split(X, Y=Y, ratio=[0.4, 0.4, 0.2], shuffle=True, random_seed=7)
     
     # normalizer = Normalizer()
     # x_train = normalizer.fit(x_train)
     # x_val = normalizer.apply(x_val)
 
-    ITERATIONS = 1
+    EPOCHS = 20000
 
     model = Sequential([
         Dense(size=100, input_shape=x_train.shape, activation=LeakyRelu),
         Dense(size=20, activation=LeakyRelu),
+        Dense(size=20, activation=LeakyRelu),
         Dense(size=10, activation=Softmax),
     ])
     
-    model.compile(cost=CategoricalCrossEntropy(), metrics=[RMSE()])
+    model.compile(cost=CategoricalCrossEntropy(), metrics=[CategoricalAccuracy()])
 
-    history = model.fit(x_train, y_train, epochs=ITERATIONS, x_val=x_val, y_val=y_val, batchsize=32)
+    history = model.fit(x_train, y_train, epochs=EPOCHS, x_val=x_val, y_val=y_val, batchsize=32)
+    plot_history(history, title="Mnist", validation=True)
 
-    plot_history(history, title="Mnist")
+    # history = model.fit(x_train, y_train, epochs=EPOCHS, x_val=None, y_val=None, batchsize=32)
+    # plot_history(history, title="Mnist", validation=False)
 
 
 

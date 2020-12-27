@@ -50,5 +50,10 @@ train_model()
 
 ![History Plots](https://github.com/Mathemmagician/raML/blob/master/imgs/raML_3_Boston_Housing_Price.png?raw=true "History")
 
-
 Works beautifuly!
+
+### MNIST
+
+But wait, there is more! Checkout `main.ipynb` for the latest example of tackling the MNIST dataset with 80% accuracy!!
+
+It will only get better!

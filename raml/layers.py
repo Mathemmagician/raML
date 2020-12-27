@@ -58,7 +58,7 @@ class Dense(Layer):
         #self.W = np.random.rand(self.OUT, self.IN)
         self.W = np.random.randn(self.OUT, self.IN) * np.sqrt(2 / (self.IN + self.OUT))
         # Important note: for tanh: 1/self.IN, Relu: 2/self.IN. Instead, I'm using new theory
-        self.alpha = 0.01 # Place holder for optimizer
+        self.alpha = 0.1 # Place holder for optimizer
     
     def forward(self, X):
         '''Applies forward propagation to inputs X, i.e.

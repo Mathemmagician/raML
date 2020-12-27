@@ -26,7 +26,7 @@ def main():
     x_train = normalizer.fit(x_train)
     x_val = normalizer.apply(x_val)
 
-    ITERATIONS = 1000
+    EPOCHS = 1000
 
     model = Sequential([
         Dense(size=100, input_shape=x_train.shape, activation=LeakyRelu),
@@ -37,7 +37,7 @@ def main():
     
     model.compile(cost=MSE(), metrics=[RMSE()])
 
-    history = model.fit(x_train, y_train, epochs=ITERATIONS, epochstep=10, x_val=x_val, y_val=y_val)
+    history = model.fit(x_train, y_train, epochs=EPOCHS, x_val=x_val, y_val=y_val) #, batchsize=32)
 
     plot_history(history)
 
